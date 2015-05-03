@@ -1,0 +1,37 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+
+    </style>
+
+    <!-- Main activity theme. -->
+    <style name="WiaTheme" parent="AppTheme">
+        <item name="actionBarStyle">@style/WiaActionBarStyle</item>
+    </style>
+
+    <!-- Detail activity theme. -->
+    <style name="WiaDetailTheme" parent="AppTheme">
+        <item name="actionBarStyle">@style/WiaDetailActionBarStyle</item>
+    </style>
+
+    <!-- main activity action bar styles -->
+    <style name="WiaActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="displayOptions">useLogo|showHome</item>
+        <item name="logo">@drawable/wia_main</item>
+    </style>
+
+    <!-- detail activity action bar styles -->
+    <style name="WiaDetailActionBarStyle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="displayOptions">useLogo|showHome</item>
+        <item name="logo">@drawable/wia_detail</item>
+    </style>
+
+    <!--<style name="WiaActionBarTitleText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/wia_background_yellow</item>
+        <item name="android:textAppearanceLarge">@android:style/TextAppearance.Large</item>
+
+    </style>-->
+
+</resources>

@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Whats it About?</string>
+    <string name="title_search_detail">What\'s it About?</string>
+    <string name="title_search_list">TV and Movie Search</string>
+    <string name="search_hint">Enter part of a title</string>
+    <string name="button_send">Search</string>
+    <string name="action_share">Share</string>
+
+
+</resources>

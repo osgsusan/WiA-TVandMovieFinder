@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="osg.susan.moviefinder" >
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/wia"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="osg.susan.moviefinder.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/WiaTheme"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
+        <activity
+            android:name="osg.susan.moviefinder.DetailActivity"
+            android:label="@string/title_search_detail"
+            android:theme="@style/WiaDetailTheme"
+            android:parentActivityName="osg.susan.moviefinder.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="osg.susan.moviefinder.MainActivity" />
+        </activity>
+        <provider
+            android:authorities="osg.susan.moviefinder"
+            android:name="osg.susan.moviefinder.data.SearchDataProvider" />
+        <service android:name="osg.susan.moviefinder.service.SearchDataService"/>
+        <receiver android:name="osg.susan.moviefinder.service.SearchBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>
