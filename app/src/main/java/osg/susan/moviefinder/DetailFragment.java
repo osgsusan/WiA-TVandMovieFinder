@@ -10,6 +10,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,7 +28,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
     static final String DETAIL_URI = "URI";
-    private static final String WIA_SHARE_HASHTAG = " #WIA?WhatsItAbout";
+    private static final String WIA_SHARE_HASHTAG = " #WiA?WhatsItAbout";
 
     private ShareActionProvider mShareActionProvider;
     private String shareString;
@@ -57,10 +58,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private TextView textviewImdbId;
     private TextView textviewTitle;
     private TextView textviewYear;
-    private TextView textviewType;
-    private TextView textviewRated;
     private TextView textviewGenre;
-    private TextView textviewRuntime;
     private TextView textviewImdbRating;
     private TextView textviewAwards;
     private TextView textviewActors;
@@ -125,7 +123,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     private Intent createShareWiaIntent() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        //shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareString + WIA_SHARE_HASHTAG);
         return shareIntent;
@@ -165,7 +164,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
             String imdbId = data.getString(SearchDataContract.SearchEntry.COLUMN_INDEX_IMDB_ID);
             // url http://www.imdb.com/title/tt0858436/
-            textviewImdbId.setText("IMDb: http://www.imdb.com/title/" + imdbId);
+            textviewImdbId.setText(Html.fromHtml("<b>IMDb:</b> http://www.imdb.com/title/" + imdbId));
 
             String title = data.getString(SearchDataContract.SearchEntry.COLUMN_INDEX_TITLE);
             textviewTitle.setText(title);
@@ -191,31 +190,31 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             textviewGenre.setText(genre);
 
             String imdbRating = data.getString(SearchDataContract.SearchEntry.COLUMN_INDEX_IMDB_RATING);
-            textviewImdbRating.setText("IMDb score: " + imdbRating + "/10");
+            textviewImdbRating.setText(Html.fromHtml("<b>IMDb score:</b> " + imdbRating + "/10"));
 
             String awards = data.getString(SearchDataContract.SearchEntry.COLUMN_INDEX_AWARDS);
-            textviewAwards.setText("awards: " + awards);
+            textviewAwards.setText(Html.fromHtml("<b>awards:</b> " + awards));
 
             String actors = data.getString(SearchDataContract.SearchEntry.COLUMN_INDEX_ACTORS);
-            textviewActors.setText("actors: " + actors);
+            textviewActors.setText(Html.fromHtml("<b>actors:</b> " + actors));
 
             String director = data.getString(SearchDataContract.SearchEntry.COLUMN_INDEX_DIRECTOR);
-            textviewDirector.setText("director: " + director);
+            textviewDirector.setText(Html.fromHtml("<b>director:</b> " + director));
 
             String writer = data.getString(SearchDataContract.SearchEntry.COLUMN_INDEX_WRITER);
-            textviewWriter.setText("writer: " + writer);
+            textviewWriter.setText(Html.fromHtml("<b>writer:</b> " + writer));
 
             String country = data.getString(SearchDataContract.SearchEntry.COLUMN_INDEX_COUNTRY);
-            textviewCountry.setText("country: " + country);
+            textviewCountry.setText(Html.fromHtml("<b>country:</b> " + country));
 
             String language = data.getString(SearchDataContract.SearchEntry.COLUMN_INDEX_LANGUAGE);
-            textviewLanguage.setText("languages: " + language);
+            textviewLanguage.setText(Html.fromHtml("<b>languages:</b> " + language));
 
             String plot = data.getString(SearchDataContract.SearchEntry.COLUMN_INDEX_PLOT);
             textviewPlot.setText(plot);
 
             // For the share intent
-            shareString = String.format("%s %s %s%s", "Check out the", type, title, "!");
+            shareString = String.format("%s %s%s %s", "Check out this", type, "!", title);
 
             // If onCreateOptionsMenu has already happened, update the share intent now.
             if (mShareActionProvider != null) {
