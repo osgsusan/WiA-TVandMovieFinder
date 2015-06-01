@@ -29,7 +29,8 @@ public class SearchDataService extends IntentService {
 
     public static final String IMDBID_QUERY_EXTRA = "imdbqe";
 
-    private final String LOG_TAG = SearchDataService.class.getSimpleName();
+    private static final String LOG_TAG = SearchDataService.class.getSimpleName();
+    private static final String RESULTS_NOT_FOUND = "Search results not found.";
 
     private Vector<ContentValues> cVVector;
 
@@ -61,9 +62,19 @@ public class SearchDataService extends IntentService {
                         this.getContentResolver().bulkInsert(
                                 SearchDataContract.SearchEntry.CONTENT_URI, cvArray);
                     }
+                    Log.d(LOG_TAG, "SearchData Service Complete. " + cVVector.size() + " Inserted");
                 }
             }
-            Log.d(LOG_TAG, "SearchData Service Complete. " + cVVector.size() + " Inserted");
+        } else {
+            if (cVVector != null) {
+                // add fake title to database as message
+                ContentValues searchValues = new ContentValues();
+                searchValues.put(SearchDataContract.SearchEntry.COLUMN_IMDB_ID, "");
+                searchValues.put(SearchDataContract.SearchEntry.COLUMN_TITLE, RESULTS_NOT_FOUND);
+                this.getContentResolver().insert(
+                        SearchDataContract.SearchEntry.CONTENT_URI, searchValues);
+                Log.d(LOG_TAG, "SearchData Service Complete. " + cVVector.size() + " Inserted");
+            }
         }
     }
 
@@ -144,7 +155,15 @@ public class SearchDataService extends IntentService {
     }
 
     private List<String> getSearchDataFromJson(String searchJsonStr) throws JSONException {
+        /*JSONObject obj = new JSONObject(" .... ");
+        String pageName = obj.getJSONObject("pageInfo").getString("pageName");
 
+        JSONArray arr = obj.getJSONArray("posts");
+        for (int i = 0; i < arr.length(); i++)
+        {
+            String post_id = arr.getJSONObject(i).getString("post_id");
+            ......
+        }*/
         // Search result information. Each search result info is an element of the "list" array.
         final String OMDB_RESULT_LIST = "Search";
         final String OMDB_IMDBID = "imdbID";
@@ -152,18 +171,27 @@ public class SearchDataService extends IntentService {
         List<String> imdbIdList = new ArrayList<>();
         if (searchJsonStr != null && !searchJsonStr.isEmpty()) {
             JSONObject searchJson = new JSONObject(searchJsonStr);
+            try {
+                JSONArray resultsArray = searchJson.getJSONArray(OMDB_RESULT_LIST);
 
-            // handle no imdblist
-            JSONArray resultsArray = searchJson.getJSONArray(OMDB_RESULT_LIST);
+                // Insert the new search information into the database
+                cVVector = new Vector<>(resultsArray.length());
 
-            // Insert the new search information into the database
-            cVVector = new Vector<>(resultsArray.length());
+                for (int i = 0; i < resultsArray.length(); i++) {
+                    // Get the JSON object representing the result
+                    // Add the imdbId from each search result to the arraylist
+                    JSONObject result = resultsArray.getJSONObject(i);
+                    imdbIdList.add(result.getString(OMDB_IMDBID));
+                }
+            } catch (JSONException e) {
+                // handle no imdblist, getJsonObject, check for response = false;
+                if (searchJsonStr.contains("Response") &&
+                        "False".equalsIgnoreCase(searchJson.getString("Response"))) {
+                    cVVector = new Vector<>(1);
 
-            for (int i = 0; i < resultsArray.length(); i++) {
-                // Get the JSON object representing the result
-                // Add the imdbId from each search result to the arraylist
-                JSONObject result = resultsArray.getJSONObject(i);
-                imdbIdList.add(result.getString(OMDB_IMDBID));
+                } else {
+                    e.printStackTrace();
+                }
             }
         }
         return imdbIdList;
@@ -314,17 +342,11 @@ public class SearchDataService extends IntentService {
             searchValues.put(SearchDataContract.SearchEntry.COLUMN_COUNTRY, country);
             searchValues.put(SearchDataContract.SearchEntry.COLUMN_PLOT, plot);
 
-
             cVVector.add(searchValues);
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
-    }
-
-    public void clearDataOnStart() {
-        // delete old data
-        this.getContentResolver().delete(SearchDataContract.SearchEntry.CONTENT_URI, null, null);
     }
 }

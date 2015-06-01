@@ -87,7 +87,9 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                 // CursorAdapter returns a cursor at the correct position for getItem(), or null
                 // if it cannot seek to that position.
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-                if (cursor != null) {
+                boolean hasDetail =
+                        !cursor.getString(SearchDataContract.SearchEntry.COLUMN_INDEX_IMDB_ID).isEmpty();
+                if (cursor != null && hasDetail) {
                     ((Callback) getActivity())
                             .onItemSelected(SearchDataContract.SearchEntry.buildImdbIdDataUri(
                                     cursor.getString(SearchDataContract.SearchEntry.COLUMN_INDEX_IMDB_ID)
@@ -143,7 +145,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     // query the data
-    public void onDataQuery( ) {
+    /*public void onDataQuery( ) {
         updateData();
         getLoaderManager().restartLoader(SEARCH_LOADER, null, this);
     }
@@ -158,7 +160,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         Intent intent = new Intent(getActivity(), SearchDataService.class);
         intent.putExtra(SearchDataService.IMDBID_QUERY_EXTRA, "");
         getActivity().startService(intent);
-    }
+    }*/
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
